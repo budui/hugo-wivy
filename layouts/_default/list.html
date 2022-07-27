@@ -1,0 +1,13 @@
+{{ define "main" }}
+<ul class="article-item hidden-link">
+    {{- $pctx := . -}}
+    {{ range .RegularPages }}
+      {{ if not .Params.hide }}
+        <li>
+            <span class="inline-block mr-3 font-mono">{{ .Date.Format "2006/01/02" }}</span>
+            <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+        </li>
+      {{ end}}
+    {{ end }}
+</ul>
+{{ end }}

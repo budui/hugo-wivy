@@ -1,0 +1,72 @@
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="HandheldFriendly" content="True">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,shrink-to-fit=no">
+<meta name="renderer" content="webkit">
+<meta name="force-rendering" content="webkit">
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta name="format-detection" content="telephone=no,email=no,address=no">
+{{ hugo.Generator }}
+
+{{ if eq .RelPermalink "/" }}
+<title>{{ .Site.Title }}</title>
+{{ else }}
+<title>{{- .Title -}}{{- with .Params.subtitle -}} - {{- . -}} {{- end }} - {{ .Site.Title -}}</title>
+{{ end }}
+
+{{ template "_internal/schema.html" . }}
+{{ template "_internal/opengraph.html" . }}
+{{ template "_internal/twitter_cards.html" . -}}
+
+<link rel="canonical" href="{{ .Permalink }}">
+{{ if (and .Site.Params.CDN.enable (not .Site.IsServer)) }}
+<link rel="shortcut icon" href="{{ .Site.Params.CDN.HOST }}{{ .Site.Params.Favicon }}">
+{{ else }}
+<link rel="shortcut icon" href="{{ .Site.Params.Favicon }}">
+{{ end }}
+
+
+{{ $sass := resources.Get "css/style.scss" }}
+{{ $nostyle := $sass | resources.ToCSS }}
+
+{{ $FontCSS := resources.Get "css/font.css" }}
+
+{{ $NormalizeCSS := resources.Get "css/modern-normalize.css" }}
+
+
+{{ $style := slice $NormalizeCSS $nostyle $FontCSS | resources.Concat "css/style.css" | minify | fingerprint}}
+{{ if (and .Site.Params.CDN.enable (not .Site.IsServer)) }}
+<link rel="stylesheet" href="{{ .Site.Params.CDN.HOST }}{{ $style.RelPermalink }}"
+    integrity="{{ $style.Data.Integrity }}" crossorigin="anonymous">
+{{ else }}
+<link rel="stylesheet" href="{{ $style.RelPermalink }}" integrity="{{ $style.Data.Integrity }}">
+{{ end }}
+
+
+<!--
+    https://csswizardry.com/2020/05/the-fastest-google-fonts/
+
+  - 1. Preemptively warm up the fonts’ origin.
+  -
+  - 2. Initiate a high-priority, asynchronous fetch for the CSS file. Works in
+  -    most modern browsers.
+  -
+  - 3. Initiate a low-priority, asynchronous fetch that gets applied to the page
+  -    only after it’s arrived. Works in all browsers with JavaScript enabled.
+  -
+  - 4. In the unlikely event that a visitor has intentionally disabled
+  -    JavaScript, fall back to the original method. The good news is that,
+  -    although this is a render-blocking request, it can still make use of the
+  -    preconnect which makes it marginally faster than the default.
+  -->
+
+{{ $fontlink := "https://fonts.googleapis.com/css?family=Noto+Serif+SC:400,700&display=swap&subset=chinese-simplified"
+}}
+
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+<link rel="preload" as="style" href="{{- $fontlink -}}" />
+<link rel="stylesheet" href="{{- $fontlink -}}" media="print" onload="this.media='all'" />
+<noscript>
+    <link rel="stylesheet" href="{{- $fontlink -}}" />
+</noscript>

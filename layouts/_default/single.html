@@ -1,0 +1,11 @@
+{{ define "main" }}
+<article itemscope itemtype="http://schema.org/Article" class="w">
+    <header>
+        <h1 itemprop="name">{{ .Title }}</h1>
+    </header>
+    <hr>
+    <div itemprop="articleBody">
+        {{ .Content }}
+    </div>
+</article>
+{{ end }}
